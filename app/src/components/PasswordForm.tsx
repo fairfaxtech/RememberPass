@@ -15,6 +15,7 @@ export function PasswordForm() {
   const [secret, setSecret] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,24 +59,184 @@ export function PasswordForm() {
     }
   };
 
+  if (!address) {
+    return (
+      <div className="card-body" style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
+        <div style={{ fontSize: 'var(--font-size-4xl)', marginBottom: 'var(--space-4)' }}>🔗</div>
+        <h3 style={{
+          fontSize: 'var(--font-size-xl)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-700)',
+          margin: '0 0 var(--space-3) 0'
+        }}>
+          Connect Your Wallet
+        </h3>
+        <p style={{
+          color: 'var(--color-gray-500)',
+          margin: 0,
+          lineHeight: 'var(--line-height-relaxed)'
+        }}>
+          Connect your Web3 wallet to start securely storing your passwords on the blockchain.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ background: '#fff', border: '1px solid #eee', borderRadius: 8, padding: '1rem' }}>
-      <h2 style={{ marginTop: 0 }}>Add Password</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '1rem' }}>
-          <label>Title</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} required style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+    <div className="card-body">
+      <div style={{ marginBottom: 'var(--space-6)' }}>
+        <h2 style={{
+          fontSize: 'var(--font-size-xl)',
+          fontWeight: 'var(--font-weight-semibold)',
+          color: 'var(--color-gray-900)',
+          margin: '0 0 var(--space-2) 0'
+        }}>
+          Add New Password
+        </h2>
+        <p style={{
+          fontSize: 'var(--font-size-sm)',
+          color: 'var(--color-gray-600)',
+          margin: 0,
+          lineHeight: 'var(--line-height-relaxed)'
+        }}>
+          Your password will be encrypted with military-grade security before being stored on the blockchain.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+        <div className="form-group">
+          <label className="form-label">
+            Service Title *
+          </label>
+          <input
+            className="form-input"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Gmail, GitHub, Netflix..."
+            required
+          />
+          <p style={{
+            fontSize: 'var(--font-size-xs)',
+            color: 'var(--color-gray-500)',
+            margin: 'var(--space-1) 0 0 0'
+          }}>
+            A descriptive name for this password entry
+          </p>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '1rem' }}>
-          <label>Password</label>
-          <input value={secret} onChange={(e) => setSecret(e.target.value)} required style={{ padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+
+        <div className="form-group">
+          <label className="form-label">
+            Password *
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              className="form-input"
+              type={showPassword ? 'text' : 'password'}
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+              placeholder="Enter your password"
+              required
+              style={{ paddingRight: 'var(--space-12)' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: 'var(--space-3)',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-gray-500)',
+                fontSize: 'var(--font-size-sm)',
+                padding: 'var(--space-1)'
+              }}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
+          <p style={{
+            fontSize: 'var(--font-size-xs)',
+            color: 'var(--color-gray-500)',
+            margin: 'var(--space-1) 0 0 0'
+          }}>
+            This will be encrypted before storage - even we can't see it
+          </p>
         </div>
-        <button type="submit" disabled={submitting || isLoading} style={{ padding: '0.5rem 1rem', borderRadius: 6, border: '1px solid #ddd' }}>
-          {isLoading ? 'Preparing...' : submitting ? 'Submitting...' : 'Save'}
-        </button>
-        {txHash && (
-          <div style={{ marginTop: '0.5rem', fontSize: 12, color: '#4b5563' }}>Sent: {txHash}</div>
-        )}
+
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-4)',
+          paddingTop: 'var(--space-4)',
+          borderTop: '1px solid var(--color-gray-200)'
+        }}>
+          <button
+            type="submit"
+            disabled={submitting || isLoading}
+            className={`btn ${submitting || isLoading ? 'btn-secondary' : 'btn-primary'} btn-lg`}
+            style={{ width: '100%' }}
+          >
+            {isLoading ? (
+              <>
+                <div className="loading-spinner"></div>
+                Preparing encryption...
+              </>
+            ) : submitting ? (
+              <>
+                <div className="loading-spinner"></div>
+                Encrypting & storing...
+              </>
+            ) : (
+              <>
+                🔒 Encrypt & Save Password
+              </>
+            )}
+          </button>
+
+          {txHash && (
+            <div className="alert alert-success">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <span>✅</span>
+                <div>
+                  <div style={{ fontWeight: 'var(--font-weight-medium)' }}>
+                    Password saved successfully!
+                  </div>
+                  <div style={{
+                    fontSize: 'var(--font-size-xs)',
+                    fontFamily: 'var(--font-family-mono)',
+                    wordBreak: 'break-all',
+                    marginTop: 'var(--space-1)'
+                  }}>
+                    Transaction: {txHash}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(isLoading || submitting) && (
+            <div style={{
+              padding: 'var(--space-4)',
+              backgroundColor: 'var(--color-primary-50)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-primary-200)'
+            }}>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-primary-700)' }}>
+                <div style={{ fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-2)' }}>
+                  🔐 Encryption Process
+                </div>
+                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-primary-600)' }}>
+                  {isLoading && "Setting up encryption keys..."}
+                  {submitting && "Encrypting password and storing on blockchain..."}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </form>
     </div>
   );
