@@ -92,7 +92,7 @@ export function PasswordList() {
       {items.map((rec, idx) => (
         <div key={idx} style={{ border: '1px solid #eee', borderRadius: 8, padding: '0.75rem', background: '#fff' }}>
           <div style={{ fontWeight: 600 }}>{rec[0]}</div>
-          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Encrypted: {rec[1].slice(0, 32)}...</div>
+          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Password : ***</div>
           <div style={{ marginTop: 8 }}>
             {decValues[idx] ? (
               <div>
